@@ -4,30 +4,48 @@ class SmurfForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      age: '',
-      height: ''
+      smurf: {
+        name: '',
+        age: '',
+        height: ''
+        }
     };
+  }
+
+
+  handleInputChange = e => {
+    let value = e.target.value
+    const name = e.target.name
+    this.setState(prevState => ({ 
+      smurf: {
+        ...prevState.smurf,
+        [name]: value
+        }
+      })
+    );
+  }
+
+  componentDidMount() {
+    this.props.smurf && this.setState({
+      smurf: {...this.props.smurf}
+    })
   }
 
   addSmurf = event => {
     event.preventDefault();
-    this.props.addSmurf(this.state)
-    this.setState({
-      name: '',
-      age: '',
-      height: ''
-    });
+    this.props.addSmurf(this.state.smurf)
   }
 
-  handleInputChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
+  updateSmurf = event => {
+    event.preventDefault();
+    this.props.updateSmurf(this.state.smurf)
+  }
 
   render() {
+    const formHelper = this.props.smurf ? this.updateSmurf : this.addSmurf
     return (
       <div className="SmurfForm">
-        <form onSubmit={this.addSmurf}>
+        <form onSubmit={formHelper}>
           <input
             onChange={this.handleInputChange}
             placeholder="name"
@@ -46,7 +64,7 @@ class SmurfForm extends Component {
             value={this.state.height}
             name="height"
           />
-          <button type="submit">Add to the village</button>
+          <button type="submit">{ this.props.smurf ? `Update Smurf` : `Add to the village` }</button>
         </form>
       </div>
     );
